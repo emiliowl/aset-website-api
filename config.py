@@ -11,7 +11,7 @@ class Config:
         'port': int(getenv("MONGODB_PORT")),
         'username': getenv('MONGODB_USERNAME'),
         'password': getenv('MONGODB_PASSWORD'),
-        'authentication_source': 'admin'
+        'authentication_source': getenv("MONGODB_AUTH_SRC")
     }
 
 class DevelopmentConfig(Config):
