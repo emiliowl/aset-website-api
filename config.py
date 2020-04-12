@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import getenv
 
+
 class Config:
     SECRET_KEY = getenv('SECRET_KEY') or 'a random string'
     APP_PORT = int(getenv('APP_PORT'))
@@ -14,9 +15,11 @@ class Config:
         'authentication_source': getenv("MONGODB_AUTH_SRC")
     }
 
+
 class DevelopmentConfig(Config):
     FLASK_ENV = 'development'
     DEBUG = True
+
 
 config = {
     'development': DevelopmentConfig,

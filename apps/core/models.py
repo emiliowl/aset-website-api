@@ -1,18 +1,14 @@
 from datetime import datetime
 from mongoengine import (
-    BooleanField,
     DateTimeField,
-    DictField,
     EmailField,
-    EmbeddedDocument,
-    EmbeddedDocumentField,
     SortedListField,
-    StringField,
-    URLField
+    StringField
 )
 
 from apps.db import db
 from apps.model_core import ModelCore
+
 
 class Customer(db.Document, ModelCore):
     name = StringField(required=True, max_length=200)
@@ -29,6 +25,7 @@ class Customer(db.Document, ModelCore):
         
         return serial
 
+
 class Therapist(db.Document, ModelCore):
     name = StringField(required=True, max_length=200)
     phone = StringField(required=True, max_length=20)
@@ -43,5 +40,5 @@ class Therapist(db.Document, ModelCore):
         serial['email'] = self.email
         serial['last_modified'] = self.last_modified
         serial['specialties'] = self.specialties
-        
+
         return serial

@@ -2,7 +2,6 @@
 from datetime import datetime, date
 
 import json
-from uuid import uuid1
 from flask import Blueprint, Response, abort, request
 
 from apps.agenda.models import Agenda, Appointment
@@ -11,31 +10,35 @@ from apps.serializer import default
 
 bp = Blueprint('agenda', __name__)
 
+
 @bp.route('/healthcheck')
 def alive():
     return 'agenda stil breathing...'
+
 
 @bp.route('/')
 def get_all():
     try:
         agendas = Agenda.objects
         print(agendas)
-        
-        agendas_json = json.dumps([t.to_dict() for t in agendas], default=default)
+        agendas_json = json.dumps(
+            [t.to_dict() for t in agendas],
+            default=default)
         return Response(agendas_json, mimetype='application/json', status=200)
     except Exception as ex:
         print(ex)
         abort(500)
 
+
 @bp.route('/next-dates')
 def get_next_dates():
     try:
         agendas = Agenda.objects(appointment=None).distinct(field="date")
-        
+
         all_dates_list = [datetime.strptime(dt, '%d/%m/%Y').date() for dt in list(agendas)]
         all_dates_list.sort(reverse=True)
         dates_list = [dt for dt in all_dates_list if dt >= date.today()]
-        
+
         next_dates_sorted = dates_list[:9]
 
         dates_json = json.dumps(next_dates_sorted, default=default)
@@ -44,16 +47,23 @@ def get_next_dates():
         print(ex)
         abort(500)
 
+
 @bp.route('for-date/<string:agenda_date>', methods=["GET"])
 def get_for_date(agenda_date):
     try:
         agendas = Agenda.objects(date=agenda_date.replace('-', '/'))
         print(agendas)
-        agendas_json = json.dumps([t.to_dict() for t in agendas if t.appointment == None], default=default)
-        return Response(agendas_json, mimetype='application/json', status=200)
+        agendas_json = json.dumps(
+            [t.to_dict() for t in agendas if t.appointment is None],
+            default=default)
+        return Response(
+            agendas_json, 
+            mimetype='application/json', 
+            status=200)
     except Exception as ex:
         print(ex)
         abort(500)
+
 
 @bp.route('/<string:therapist_email>')
 def get(therapist_email):
@@ -61,18 +71,23 @@ def get(therapist_email):
         therapist = Therapist.objects.get(email=therapist_email)
         agendas = Agenda.objects(therapist=therapist)
         print(agendas)
-        agendas_json = json.dumps([t.to_dict() for t in agendas], default=default)
+        agendas_json = json.dumps(
+            [t.to_dict() for t in agendas], 
+            default=default)
         return Response(agendas_json, mimetype='application/json', status=200)
     except Exception as ex:
         print(ex)
         abort(500)
+
 
 @bp.route('/', methods=["POST"])
 def create():
     try:
         agenda_json = request.json
         agenda = Agenda(**agenda_json)
-        therapist = Therapist.objects.get(email=agenda_json['therapist']['email'])
+        therapist = Therapist\
+            .objects\
+            .get(email=agenda_json['therapist']['email'])
         agenda.therapist = therapist
         agenda.save()
 
@@ -81,37 +96,50 @@ def create():
         print(ex)
         abort(500)
 
-@bp.route('/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["DELETE"])
+
+@bp.route(
+    '/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', 
+    methods=["DELETE"])
 def remove(therapist_email, agenda_date, agenda_time):
     try:
         therapist = Therapist.objects.get(email=therapist_email)
-        agenda = Agenda.objects.get(therapist=therapist, date=agenda_date.replace('-', '/'), time=agenda_time)
-        
+        agenda = Agenda.objects.get(
+            therapist=therapist,
+            date=agenda_date.replace('-', '/'),
+            time=agenda_time)
+
         agenda.delete()
-                
+
         agenda_json = json.dumps(agenda.to_dict(), default=default)
         return Response(agenda_json, mimetype='application/json', status=200)
     except Exception as ex:
         print(ex)
         abort(500)
 
-@bp.route('/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["POST"])
+
+@bp.route(
+    '/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>',
+    methods=["POST"])
 def book(therapist_email, agenda_date, agenda_time):
     try:
         therapist = Therapist.objects.get(email=therapist_email)
         print(therapist.email)
         print(agenda_date)
         print(agenda_time)
-        agenda = Agenda.objects.get(therapist=therapist, date=agenda_date.replace('-', '/'), time=agenda_time)
-        
+        agenda = Agenda.objects.get(
+            therapist=therapist,
+            date=agenda_date.replace('-', '/'),
+            time=agenda_time)
+
         appointment_json = request.json
         print(appointment_json)
         customer = Customer(**appointment_json['customer'])
-        
+
         try:
             lookup_customer = Customer.objects.get(email=customer.email)
             customer = lookup_customer
-        except:
+        except Exception as ex:
+            print(f'customer not found {ex}')
             customer.save()
 
         appointment = Appointment()
