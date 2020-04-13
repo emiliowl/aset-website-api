@@ -32,14 +32,33 @@ def get_all():
         abort(500)
 
 
+@bp.route('/for-specialty/<string:specialty>')
+def get_all_for_specialty(specialty):
+    try:
+        therapists = Therapist.objects(specialties__contains=specialty)
+        print(therapists)
+
+        therapists_json = json.dumps(
+            [t.to_dict() for t in therapists],
+            default=default)
+
+        return Response(
+            therapists_json,
+            mimetype='application/json',
+            status=200)
+    except Exception as ex:
+        print(ex)
+        abort(500)
+
+
 @bp.route('/<string:email>')
 def get(email):
     try:
         therapist = Therapist.objects.get(email=email)
         therapist_json = json.dumps(therapist.to_dict(), default=default)
         return Response(
-            therapist_json, 
-            mimetype='application/json', 
+            therapist_json,
+            mimetype='application/json',
             status=200)
     except Exception as ex:
         print(ex)
