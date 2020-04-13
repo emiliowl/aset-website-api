@@ -28,6 +28,7 @@ class Customer(db.Document, ModelCore):
 
 class Therapist(db.Document, ModelCore):
     name = StringField(required=True, max_length=200)
+    slug = StringField(required=True, max_length=20)
     phone = StringField(required=True, max_length=20)
     email = EmailField(required=True, max_length=50, unique=True)
     specialties = SortedListField(field=StringField(max_length=20))
@@ -36,6 +37,7 @@ class Therapist(db.Document, ModelCore):
     def to_dict(self):
         serial = {}
         serial['name'] = self.name
+        serial['slug'] = self.slug
         serial['phone'] = self.phone
         serial['email'] = self.email
         serial['last_modified'] = self.last_modified
