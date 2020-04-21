@@ -4,9 +4,11 @@ from datetime import datetime, date
 
 from flask import Blueprint, Response, abort, request
 from mongoengine import Q
+from marshmallow import ValidationError
 
 from apps.agenda.models import Agenda, Appointment, Calendar
 from apps.core.models import Therapist, Customer
+from apps.core.validations import CustomerSchema
 from apps.serializer import default
 
 bp = Blueprint('agenda', __name__)
@@ -194,9 +196,6 @@ def book(name, therapist_email, agenda_date, agenda_time):
     try:
         calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
-        print(therapist.email)
-        print(agenda_date)
-        print(agenda_time)
         agenda = Agenda.objects.get(
             calendar=calendar,
             therapist=therapist,
@@ -204,8 +203,8 @@ def book(name, therapist_email, agenda_date, agenda_time):
             time=agenda_time)
 
         appointment_json = request.json
-        print(appointment_json)
-        customer = Customer(**appointment_json['customer'])
+
+        customer = CustomerSchema().load(appointment_json['customer'])
 
         try:
             customer = Customer.objects.get(email=customer.email)
@@ -222,6 +221,10 @@ def book(name, therapist_email, agenda_date, agenda_time):
 
         agenda_json = json.dumps(agenda.to_dict(), default=default)
         return Response(agenda_json, mimetype='application/json', status=200)
+    except ValidationError as err:
+        print('erro de validação!', err.messages)
+        return err.messages, 400
+
     except Exception as ex:
         print(ex)
         abort(500)

@@ -17,11 +17,12 @@ class Customer(db.Document, ModelCore):
     last_modified = DateTimeField(default=datetime.now)
 
     def to_dict(self):
-        serial = {}
-        serial['name'] = self.name
-        serial['phone'] = self.phone
-        serial['email'] = self.email
-        serial['last_modified'] = self.last_modified
+        serial = {
+            'name': self.name,
+            'phone': self.phone,
+            'email': self.email,
+            'last_modified': self.last_modified
+        }
         
         return serial
 
