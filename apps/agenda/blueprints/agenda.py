@@ -5,7 +5,7 @@ from datetime import datetime, date
 from flask import Blueprint, Response, abort, request
 from mongoengine import Q
 
-from apps.agenda.models import Agenda, Appointment
+from apps.agenda.models import Agenda, Appointment, Calendar
 from apps.core.models import Therapist, Customer
 from apps.serializer import default
 
@@ -18,9 +18,10 @@ def alive():
 
 
 @bp.route('/')
-def get_all():
+def get_all(name):
     try:
-        agendas = Agenda.objects
+        calendar = Calendar.objects.get(name=name)
+        agendas = Agenda.objects(calendar=calendar)
         print(agendas)
         agendas_json = json.dumps(
             [t.to_dict() for t in agendas],
@@ -32,15 +33,19 @@ def get_all():
 
 
 @bp.route('/next-dates')
-def get_next_dates():
+def get_next_dates(name):
     try:
-        agendas = Agenda.objects(appointment=None).distinct(field="date")
-
+        calendar = Calendar.objects.get(name=name)
+        agendas = Agenda.objects(calendar=calendar, appointment=None)
+        print(agendas)
+        agendas = [ag.date for ag in agendas if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
+        
         all_dates_list = [
-            datetime.strptime(dt, '%d/%m/%Y').date() for dt in list(agendas)
+            datetime.strptime(ag, '%d/%m/%Y').date() for ag in list(agendas)
         ]
+
         all_dates_list.sort(reverse=True)
-        dates_list = [dt for dt in all_dates_list if dt >= date.today()]
+        dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
 
         next_dates_sorted = dates_list[:9]
 
@@ -52,20 +57,22 @@ def get_next_dates():
 
 
 @bp.route('/next-dates/<string:specialty>')
-def get_next_dates_for_specialty(specialty):
+def get_next_dates_for_specialty(name, specialty):
     try:
+        calendar = Calendar.objects.get(name=name)
         therapists = Therapist.objects(Q(specialties__contains=specialty))
         print(therapists)
         agendas = Agenda.objects(
-                Q(appointment=None, therapist__in=therapists),
-            )\
-            .distinct(field="date")
+                Q(calendar=calendar, appointment=None, therapist__in=therapists),
+            )
+        print(agendas)
+        agendas = [ag.date for ag in list(agendas) if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
 
         all_dates_list = [
             datetime.strptime(dt, '%d/%m/%Y').date() for dt in list(agendas)
         ]
         all_dates_list.sort(reverse=True)
-        dates_list = [dt for dt in all_dates_list if dt >= date.today()]
+        dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
 
         next_dates_sorted = dates_list[:9]
 
@@ -77,12 +84,15 @@ def get_next_dates_for_specialty(specialty):
 
 
 @bp.route('for-date/<string:agenda_date>', methods=["GET"])
-def get_for_date(agenda_date):
+def get_for_date(name, agenda_date):
     try:
-        agendas = Agenda.objects(date=agenda_date.replace('-', '/'))
+        calendar = Calendar.objects.get(name=name)
+        agendas = Agenda.objects(calendar=calendar, date=agenda_date.replace('-', '/'), appointment=None)
         print(agendas)
+        agendas = [ag for ag in agendas if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
+
         agendas_json = json.dumps(
-            [t.to_dict() for t in agendas if t.appointment is None],
+            [t.to_dict() for t in agendas],
             default=default)
         return Response(
             agendas_json,
@@ -94,21 +104,24 @@ def get_for_date(agenda_date):
 
 
 @bp.route('for-date/<string:agenda_date>/<string:specialty>', methods=["GET"])
-def get_for_date_and_specialty(agenda_date, specialty):
+def get_for_date_and_specialty(name, agenda_date, specialty):
     try:
+        calendar = Calendar.objects.get(name=name)
         therapists = Therapist.objects(Q(specialties__contains=specialty))
         print(therapists)
         agendas = Agenda.objects(
             Q(
+                calendar=calendar,
                 appointment=None,
                 date=agenda_date.replace('-', '/'),
                 therapist__in=therapists
             )
         )
         print(agendas)
+        agendas = [ag for ag in agendas if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
 
         agendas_json = json.dumps(
-            [t.to_dict() for t in agendas if t.appointment is None],
+            [t.to_dict() for t in agendas],
             default=default)
         return Response(
             agendas_json,
@@ -120,10 +133,11 @@ def get_for_date_and_specialty(agenda_date, specialty):
 
 
 @bp.route('/<string:therapist_email>')
-def get(therapist_email):
+def get(name, therapist_email):
     try:
+        calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
-        agendas = Agenda.objects(therapist=therapist)
+        agendas = Agenda.objects(calendar=calendar, therapist=therapist)
         print(agendas)
         agendas_json = json.dumps(
             [t.to_dict() for t in agendas],
@@ -135,10 +149,12 @@ def get(therapist_email):
 
 
 @bp.route('/', methods=["POST"])
-def create():
+def create(name):
     try:
         agenda_json = request.json
         agenda = Agenda(**agenda_json)
+        calendar = Calendar.objects().get(name=name)
+        agenda.calendar = calendar
         therapist = Therapist\
             .objects\
             .get(email=agenda_json['therapist']['email'])
@@ -151,13 +167,13 @@ def create():
         abort(500)
 
 
-@bp.route(
-    '/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>',
-    methods=["DELETE"])
-def remove(therapist_email, agenda_date, agenda_time):
+@bp.route('/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["DELETE"])
+def remove(name, therapist_email, agenda_date, agenda_time):
     try:
+        calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
         agenda = Agenda.objects.get(
+            calendar=calendar,
             therapist=therapist,
             date=agenda_date.replace('-', '/'),
             time=agenda_time)
@@ -174,13 +190,15 @@ def remove(therapist_email, agenda_date, agenda_time):
 @bp.route(
     '/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>',
     methods=["POST"])
-def book(therapist_email, agenda_date, agenda_time):
+def book(name, therapist_email, agenda_date, agenda_time):
     try:
+        calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
         print(therapist.email)
         print(agenda_date)
         print(agenda_time)
         agenda = Agenda.objects.get(
+            calendar=calendar,
             therapist=therapist,
             date=agenda_date.replace('-', '/'),
             time=agenda_time)
@@ -190,8 +208,7 @@ def book(therapist_email, agenda_date, agenda_time):
         customer = Customer(**appointment_json['customer'])
 
         try:
-            lookup_customer = Customer.objects.get(email=customer.email)
-            customer = lookup_customer
+            customer = Customer.objects.get(email=customer.email)
         except Exception as ex:
             print(f'customer not found {ex}')
             customer.save()
