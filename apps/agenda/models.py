@@ -14,7 +14,7 @@ from apps.core.models import Customer, Therapist
 
 
 class Appointment(db.EmbeddedDocument, ModelCore):
-    customer = ReferenceField(Customer)
+    customer: Customer = ReferenceField(Customer)
     specialty = StringField(required=True)
 
     def to_dict(self):
@@ -43,9 +43,9 @@ class Calendar(db.Document, ModelCore):
 class Agenda(db.Document, ModelCore):
     date = StringField(required=True)
     time = StringField(required=True, max_length=5)
-    calendar = ReferenceField(Calendar, required=True)
-    therapist = ReferenceField(Therapist, required=True)
-    appointment = EmbeddedDocumentField(Appointment)
+    calendar: Calendar = ReferenceField(Calendar, required=True)
+    therapist: Therapist = ReferenceField(Therapist, required=True)
+    appointment: Appointment = EmbeddedDocumentField(Appointment)
     last_modified = DateTimeField(default=datetime.now)
 
     def to_dict(self):

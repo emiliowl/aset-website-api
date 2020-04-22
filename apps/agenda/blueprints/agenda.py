@@ -10,6 +10,7 @@ from apps.agenda.models import Agenda, Appointment, Calendar
 from apps.core.models import Therapist, Customer
 from apps.core.validations import CustomerSchema
 from apps.serializer import default
+from infra.mail_sender import send_mail
 
 bp = Blueprint('agenda', __name__)
 
@@ -204,10 +205,14 @@ def book(name, therapist_email, agenda_date, agenda_time):
 
         appointment_json = request.json
 
-        customer = CustomerSchema().load(appointment_json['customer'])
+        customer = Customer(**CustomerSchema().load(appointment_json['customer']))
 
         try:
-            customer = Customer.objects.get(email=customer.email)
+            db_customer = Customer.objects.get(email=customer.email)
+            db_customer.name = customer.name
+            db_customer.phone = customer.phone
+            customer = db_customer
+            customer.save()
         except Exception as ex:
             print(f'customer not found {ex}')
             customer.save()
@@ -218,6 +223,9 @@ def book(name, therapist_email, agenda_date, agenda_time):
 
         agenda.appointment = appointment
         agenda.save()
+
+        # send e-mail related to appointment
+        send_mail('agendamento atendimento aset', agenda)
 
         agenda_json = json.dumps(agenda.to_dict(), default=default)
         return Response(agenda_json, mimetype='application/json', status=200)
