@@ -24,3 +24,16 @@ class CustomerSchema(Schema):
         validate=validate.Length(min=3, max=50, error="tamanho deve ser entre {min} e {max}"),
         error_messages={**error_messages, **{"invalid": "e-mail inválido"}}
     )
+
+class MessageSchema(Schema):
+    subject = fields.Str(
+        required=True,
+        validate=validate.Length(min=3, max=50, error="tamanho deve ser entre {min} e {max}"),
+        error_messages=error_messages
+    )
+    text = fields.Str(
+        required=True,
+        validate=validate.Length(min=3, max=300, error="tamanho deve ser entre {min} e {max}"),
+        error_messages=error_messages
+    )
+    

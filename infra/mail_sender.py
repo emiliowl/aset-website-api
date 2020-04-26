@@ -3,7 +3,24 @@ import os
 from ics import Calendar, Event
 from datetime import timedelta, datetime
 
-from apps.agenda.models import Agenda
+from apps.agenda.models import Agenda, Customer
+
+def send_contact_mail(subject, text, customer: Customer):
+    curdir = os.getcwd()
+    with open(f'{curdir}{os.sep}apps{os.sep}core{os.sep}email_templates{os.sep}contact.html') as templ:
+        body = ''.join(templ.readlines())
+        body = body.replace('{{name}}', customer.name)
+        body = body.replace('{{email}}', customer.email)
+        body = body.replace('{{phone}}', customer.phone)
+        body = body.replace('{{date}}', datetime.now().strftime('%d/%m/%Y'))
+        body = body.replace('{{text}}', text)
+
+        yag = yagmail.SMTP(os.getenv("EMAIL_SENDER"), os.getenv("EMAIL_PWD"))
+        yag.send(
+            to=os.getenv("EMAIL_SENDER"),
+            subject=subject,
+            contents=body
+        )
 
 def send_mail(description, agenda: Agenda):
     c = Calendar()
