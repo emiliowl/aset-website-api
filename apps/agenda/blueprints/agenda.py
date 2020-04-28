@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import os
+from os.path import dirname
 import json
 from datetime import datetime, date
 
@@ -11,6 +13,8 @@ from apps.core.models import Therapist, Customer
 from apps.core.validations import CustomerSchema
 from apps.serializer import default
 from infra.mail_sender import send_mail
+
+from apps.agenda_upload.calendar_reader import process_agenda
 
 bp = Blueprint('agenda', __name__)
 
@@ -236,3 +240,31 @@ def book(name, therapist_email, agenda_date, agenda_time):
     except Exception as ex:
         print(ex)
         abort(500)
+
+@bp.route('/upload/<string:therapist_email>/<string:month>/<string:year>', methods=["POST"])
+def upload(name, therapist_email, month, year):
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        return 'Please upload a file', 400
+    file = request.files['file']
+    if file.filename == '':
+        return 'Please upload a file... this is empty', 400
+
+    print('processing upload...')
+    
+    calendar = Calendar.objects.get(name=name)
+    therapist = Therapist.objects.get(email=therapist_email)
+    agenda_list = Agenda.objects(
+            calendar=calendar,
+            therapist=therapist,
+            date__contains=f'{month}/{year}',
+            appointment=None)
+    print(agenda_list)
+    print(f'removing agenda entries {len(agenda_list)}')
+    for agenda in agenda_list:
+        agenda.delete()
+
+    agendas = process_agenda(file, calendar, therapist)
+    for agenda in agendas:
+        agenda.save()
+    return 'processamento efetuado com sucesso!', 200
