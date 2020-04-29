@@ -178,7 +178,7 @@ def remove_from_email(name, therapist_email, agenda_date, agenda_time):
     try:
         calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
-        agenda = Agenda.objects.get(
+        agenda :Agenda = Agenda.objects.get(
             calendar=calendar,
             therapist=therapist,
             date=agenda_date.replace('-', '/'),
@@ -194,7 +194,8 @@ def remove_from_email(name, therapist_email, agenda_date, agenda_time):
         if hours < 12:
             mensagem = 'Cancelamento realizado com sucesso...'
 
-        agenda.delete()
+        agenda.appointment = None
+        agenda.save()
 
         agenda_json = json.dumps(agenda.to_dict(), default=default)
         return 'Cancelamento realizado com sucesso.', 200
