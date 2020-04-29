@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:ics.py - http://git.io/lLljaA
+BEGIN:VEVENT
+ATTENDEE;CN=emilio.murta@msitbrasil.com:mailto:emilio.murta@msitbrasil.com
+ATTENDEE;CN=silimatavares@gmail.com:mailto:silimatavares@gmail.com
+DESCRIPTION:agendamento atendimento aset
+DTEND:20200512T140000Z
+DTSTART:20200512T130000Z
+SUMMARY:Atendimento Aset Terapias
+UID:bf72cf6d-fb81-4aea-9958-fc178e93ab5f@bf72.org
+END:VEVENT
+END:VCALENDAR

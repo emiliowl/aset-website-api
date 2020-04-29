@@ -51,10 +51,10 @@ def get_next_dates(name):
             datetime.strptime(ag, '%d/%m/%Y').date() for ag in list(agendas)
         ]
 
-        all_dates_list.sort(reverse=True)
+        all_dates_list.sort()
         dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
 
-        next_dates_sorted = dates_list[:9]
+        next_dates_sorted = dates_list[:30]
 
         dates_json = json.dumps(next_dates_sorted, default=default)
         return Response(dates_json, mimetype='application/json', status=200)
@@ -78,10 +78,10 @@ def get_next_dates_for_specialty(name, specialty):
         all_dates_list = [
             datetime.strptime(dt, '%d/%m/%Y').date() for dt in list(agendas)
         ]
-        all_dates_list.sort(reverse=True)
+        all_dates_list.sort()
         dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
 
-        next_dates_sorted = dates_list[:9]
+        next_dates_sorted = dates_list[:30]
 
         dates_json = json.dumps(next_dates_sorted, default=default)
         return Response(dates_json, mimetype='application/json', status=200)
@@ -173,6 +173,34 @@ def create(name):
         print(ex)
         abort(500)
 
+@bp.route('/cancel/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["GET"])
+def remove_from_email(name, therapist_email, agenda_date, agenda_time):
+    try:
+        calendar = Calendar.objects.get(name=name)
+        therapist = Therapist.objects.get(email=therapist_email)
+        agenda = Agenda.objects.get(
+            calendar=calendar,
+            therapist=therapist,
+            date=agenda_date.replace('-', '/'),
+            time=agenda_time)
+
+        date_str = f"{agenda_date.replace('-', '/')} {agenda_time.split(':')[0]}:{agenda_time.split(':')[1]}"
+        date = datetime.strptime(date_str, '%d/%m/%Y %H:%M')
+        date_diff = date - datetime.now()
+        hours = date_diff.total_seconds() / 60 / 60
+        print('Diferença de horas:')
+        print(hours)
+        mensagem = 'Cancelamento realizado com sucesso.'
+        if hours < 12:
+            mensagem = 'Cancelamento realizado com sucesso...'
+
+        agenda.delete()
+
+        agenda_json = json.dumps(agenda.to_dict(), default=default)
+        return 'Cancelamento realizado com sucesso.', 200
+    except Exception as ex:
+        print(ex)
+        abort(500)
 
 @bp.route('/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["DELETE"])
 def remove(name, therapist_email, agenda_date, agenda_time):
