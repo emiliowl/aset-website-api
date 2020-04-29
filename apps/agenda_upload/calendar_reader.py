@@ -24,7 +24,7 @@ def process_agenda(file, calendar, therapist):
                     print(f'Day: {k} -> Hour: {row[k]}')
                     agenda = Agenda()
                     agenda.date = f'{k}/05/2020'
-                    agenda.time = f'{row[k]}:00'
+                    agenda.time = f'{row[k]}'
                     agenda.calendar = calendar
                     agenda.therapist = therapist
                     created_agendas.append(agenda)
