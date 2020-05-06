@@ -1,69 +1,141 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<style>
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    table {
+        text-align: left;
+    }
+
+    .col-header {
+        font-weight: bold;
+    }
+
+    /* Extra small devices (phones, 600px and down) */
+    @media only screen and (max-width: 768px) {
+        .col-sm-4 {
+            flex: 4
+        }
+        .col-sm-8 {
+            flex: 8
+        }
+    }
+    /* Medium devices (landscape tablets, 768px and up) */
+    @media only screen and (min-width: 769px) {
+        .col-md-3 {
+            flex: 3
+        }
+        .col-md-4 {
+            flex: 4
+        }
+        .col-md-9 {
+            flex: 9
+        }
+        .col-md-12 {
+            flex: 12
+        }
+    }
+</style>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Bem vindo à Aset Terapias!</title>
+    <meta charset="UTF-8">
 </head>
-<body>
-	<span style="font-family:Trebuchet MS, Verdana, Arial; font-size:17px; font-weight:bold;" color="#800080">Seu horário foi agendado com sucesso!</span>
-	<span style="font-family:Trebuchet MS, Verdana, Arial; font-size:17px; font-weight:bold;">Confirmação de Agendamento,</span>
-	<br />
-	<p>Olá {{nome}}, você possui um horário agendado conforme abaixo:</p>
-	<br />
-	<strong>Terapia:</strong>&nbsp;&nbsp;&nbsp;{{nome_terapia}}
-	<strong>Profissional:</strong>&nbsp;&nbsp;&nbsp;{{nome_terapeuta}}
-	<strong>Data:</strong>&nbsp;&nbsp;&nbsp;{{data}}
-	<strong>Horário:</strong>&nbsp;&nbsp;&nbsp;{{hora}}
-	<hr/>
-	<span style="color: #800080;font-size: 14px;">Em caso de necesidade de reagendamento/cancelamento do horário pedimos a gentileza de avisar com antecedência mínima de 12h, clicando <a href='{{api}}/api/calendars/{{calendar}}/agendas/cancel/{{therapist_mail}}/{{date}}/{{hour}}'>aqui</a>.</span>
-    <hr />
-	Obrigado,<br/>
-	Equipe ASET<br/><br/>
-	<br/>
-	Esta mensagem foi enviada pois você recentemente fez um agendamento de consulta pelo nosso <a href='http://www.asetterapias.com.br'>site</a>.
-	<br/>
-	<span>Alguma dúvida?</span>
-	<p>Responda à este e-mail ou nos acione através de um dos nossos contatos:</p>
-	<table>
-		<tr>
-			<td>
-				<h5>Telefones</h5>
-				<span>(11) 3705-2738</span><br/>
-				<span>(11) 98794-8205</span><br/>
-				<a target="_blank" href="mailto:aset.contato@gmail.com?subject=Retorno%3A%20E-mail%20de%20agendamento" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:13px;text-decoration:none;color:#1105F2;">aset.contato@gmail.com</a>
-			</td>
-			<td>
-				<h5>Endereço</h5>
-				<span>Av. João Ramalho, 430 - sala 34</span>
-				<span>Vila Assunção - Santo André / SP</span>
-			</td>
-		</tr>
-	</table>
-	<hr />
-	<table>
-		<tr>
-			<td><a target="_blank" href="https://www.facebook.com/asetterapiasholisticas/" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Facebook" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/facebook-circle-colored.png" alt="Fb" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
-			<td><a target="_blank" href="https://twitter.com/ASET_Terapias" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Twitter" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/twitter-circle-colored.png" alt="Tw" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
-			<td><a target="_blank" href="https://www.instagram.com/asetterapias/" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Instagram" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/instagram-circle-colored.png" alt="Inst" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
-			<td><a target="_blank" href="https://www.youtube.com/user/ASETTerapias" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Youtube" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/youtube-circle-colored.png" alt="Yt" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
-		</tr>
-	</table>
-	<br />
-	<h3>Recomendações pré-consulta:</h3>
-    <p>
-        Face a pandemia de COVID-19, doença causada pelo novo coronavírus, a rotina de milhares de pessoas está mudando no mundo. O coronavírus é de fácil transmissão e pode se disseminar pelo ar ou pelo contato pessoal com gotículas de saliva, espirro, tosse, catarro ou até mesmo com o toque ou aperto de mão com a pessoa infectada.
-    </p>
-    <p>
-        A ASET Terapias Holísticas tem o compromisso com a saúde. Por isso, atendendo às recomendações do Ministério da Saúde, estamos adotando algumas medidas de cuidado para os atendimentos presenciais afim de contribuir com a prevenção do coronavírus.
-    </p>
-    <p>
-         Desta forma, na confirmação de seu agendamento sugerimos que observe os seguintes cuidados e caso se encaixe em algum deles, pedimos que entre em contato conosco para reagendamento do seu horário:
-    </p>
-    <ol>
-        <li>Pacientes sintomáticos não devem comparecer, ou seja, se você apresentou febre (>37,3), tosse, dificuldade de respirar nos ultimos 14 dias.</li>
-        <li>ou esteve em contato com alguém com diagnóstico positivo nos ultimos 14 dias</li>
-        <li>ou esteve em contato com alguém que apresentou sintomas nos ultimos 14 dias</li>
-    </ol>
-	<a href="mailto:aset.contato@gmail.com">Não quero mais receber</a>
-</body>
-</html>
+<div>
+    <div class="container text-center" style="padding-top: 2em">
+        <div class="row">
+            <div class="col-md-3 col-sm-4">
+                <img style="width: 100%; max-width: 100px" src="https://ibbqfj.stripocdn.email/content/guids/CABINET_1489503b4d3a5666baeafe308a8306b2/images/44671587478699534.png" alt="">
+            </div>
+            <div class="col-md-9 col-sm-8">
+                <h1 class="display-4" style="color: #800080;">Seja bem vindo à Aset Terapias</h1>
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="container">
+        <h1>Confirmação de Agendamento</h1>
+        <br/>
+        <span>Olá {{nome}}, você possui um horário agendado com o terapeuta:</span><br /><br />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td class="col-header">Terapia</td>
+                    <td>{{nome_terapia}}</td>
+                </tr>
+                <tr>
+                    <td class="col-header">Profissional</td>
+                    <td>{{nome_terapeuta}}</td>
+                </tr>
+                <tr>
+                    <td class="col-header">Data</td>
+                    <td>{{data}}</td>
+                </tr>
+                <tr>
+                    <td class="col-header">Horário</td>
+                    <td>{{hora}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <p>
+
+            <hr/>
+            <span style="color: #800080;font-size: 14px;">Em caso de necesidade de reagendamento/cancelamento do horário pedimos a gentileza de avisar com antecedência mínima de 12h, clicando <a href='{{api}}/api/calendars/{{calendar}}/agendas/cancel/{{therapist_mail}}/{{date}}/{{hour}}'>aqui</a>.</span>
+            <hr />
+            <h3>Recomendações pré-consulta:</h3>
+            <p>
+                Face a pandemia de COVID-19, doença causada pelo novo coronavírus, a rotina de milhares de pessoas está mudando no mundo. O coronavírus é de fácil transmissão e pode se disseminar pelo ar ou pelo contato pessoal com gotículas de saliva, espirro, tosse, catarro ou até mesmo com o toque ou aperto de mão com a pessoa infectada.
+            </p>
+            <p>
+                A ASET Terapias Holísticas tem o compromisso com a saúde. Por isso, atendendo às recomendações do Ministério da Saúde, estamos adotando algumas medidas de cuidado para os atendimentos presenciais afim de contribuir com a prevenção do coronavírus.
+            </p>
+            <p>
+                 Desta forma, na confirmação de seu agendamento sugerimos que observe os seguintes cuidados e caso se encaixe em algum deles, pedimos que entre em contato conosco para reagendamento do seu horário:
+            </p>
+            <ol>
+                <li>Pacientes sintomáticos não devem comparecer, ou seja, se você apresentou febre (>37,3), tosse, dificuldade de respirar nos ultimos 14 dias.</li>
+                <li>ou esteve em contato com alguém com diagnóstico positivo nos ultimos 14 dias</li>
+                <li>ou esteve em contato com alguém que apresentou sintomas nos ultimos 14 dias</li>
+            </ol>
+        </p>
+    </div>
+    <div class="container">
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Redes sociais</h3>
+                <span>Siga-nos em nossas redes sociais</span>
+                <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
+                    <tbody><tr style="border-collapse:collapse;">
+                        <td align="left" style="padding:0;Margin:0;padding-top:5px;font-size:0px;">
+                            <table class="es-table-not-adapt es-social" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
+                                <tbody><tr style="border-collapse:collapse;">
+                                    <td valign="top" align="center" style="padding:0;Margin:0;padding-right:10px;"><a target="_blank" href="https://www.facebook.com/asetterapiasholisticas/" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Facebook" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/facebook-circle-colored.png" alt="Fb" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
+                                    <td valign="top" align="center" style="padding:0;Margin:0;padding-right:10px;"><a target="_blank" href="https://twitter.com/ASET_Terapias" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Twitter" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/twitter-circle-colored.png" alt="Tw" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
+                                    <td valign="top" align="center" style="padding:0;Margin:0;padding-right:10px;"><a target="_blank" href="https://www.instagram.com/asetterapias/" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Instagram" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/instagram-circle-colored.png" alt="Inst" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
+                                    <td valign="top" align="center" style="padding:0;Margin:0;"><a target="_blank" href="https://www.youtube.com/user/ASETTerapias" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:11px;text-decoration:underline;color:#1376C8;"><img title="Youtube" src="https://ibbqfj.stripocdn.email/content/assets/img/social-icons/circle-colored/youtube-circle-colored.png" alt="Yt" width="32" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;"></a></td>
+                                </tr></tbody>
+                            </table>
+                        </td>
+                    </tr></tbody>
+                </table>
+            </div>
+        </div>
+        <br/>
+        <hr/>
+        <div class="row">
+                <div class="col-md-4">
+                    <h3>Contato</h3>
+                    <span>Av. João Ramalho, 430 - sala 34</span><br/>
+                    <span>Vila Assunção - Santo André / SP</span>
+                </div>
+                <div class="col-md-4">
+                    <h3>Telefones</h3>
+                    <span>(11) 3705-2738</span><br/>
+                    <span>(11) 98794-8205</span><br/>
+                    <a target="_blank" href="mailto:aset.contato@gmail.com?subject=Retorno%3A%20E-mail%20de%20agendamento" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:13px;text-decoration:none;color:#1105F2;">aset.contato@gmail.com</a>
+                </div>
+            </div>
+    </div>
+</div>

@@ -5,9 +5,9 @@ BEGIN:VEVENT
 ATTENDEE;CN=emilio.murta@msitbrasil.com:mailto:emilio.murta@msitbrasil.com
 ATTENDEE;CN=silimatavares@gmail.com:mailto:silimatavares@gmail.com
 DESCRIPTION:agendamento atendimento aset
-DTEND:20200514T120000Z
-DTSTART:20200514T110000Z
+DTEND:20200527T140000Z
+DTSTART:20200527T130000Z
 SUMMARY:Atendimento Aset Terapias
-UID:60ec1ee6-3b78-43f8-b8e2-7b7089573885@60ec.org
+UID:c34a3008-075a-48ec-b4c4-4fb62952a1bd@c34a.org
 END:VEVENT
 END:VCALENDAR

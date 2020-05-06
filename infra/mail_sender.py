@@ -61,5 +61,6 @@ def send_mail(description, agenda: Agenda):
             bcc=agenda.therapist.email,
             subject="Aset Terapias : Confirmação de consulta",
             contents=body,
-            attachments=[f'{curdir}{os.sep}go.ics']
+            attachments=[f'{curdir}{os.sep}go.ics'],
+            newline_to_break=False,
         )
