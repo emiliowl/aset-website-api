@@ -56,32 +56,15 @@
         <h1>Confirmação de Agendamento</h1>
         <br/>
         <span>Olá {{nome}}, você possui um horário agendado com o terapeuta:</span><br /><br />
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td class="col-header">Terapia</td>
-                    <td>{{nome_terapia}}</td>
-                </tr>
-                <tr>
-                    <td class="col-header">Profissional</td>
-                    <td>{{nome_terapeuta}}</td>
-                </tr>
-                <tr>
-                    <td class="col-header">Data</td>
-                    <td>{{data}}</td>
-                </tr>
-                <tr>
-                    <td class="col-header">Horário</td>
-                    <td>{{hora}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <span class="col-header">Terapia&nbsp;</span><span>{{nome_terapia}}</span><br/>
+        <span class="col-header">Profissional&nbsp;</span><span>{{nome_terapeuta}}</span><br/>
+        <span class="col-header">Data&nbsp;</span><span>{{data}}</span><br/>
+        <span class="col-header">Horário&nbsp;</span><span>{{hora}}</span><br/>
     </div>
     <div class="container">
         <p>
-
             <hr/>
-            <span style="color: #800080;font-size: 14px;">Em caso de necesidade de reagendamento/cancelamento do horário pedimos a gentileza de avisar com antecedência mínima de 12h, clicando <a href='{{api}}/api/calendars/{{calendar}}/agendas/cancel/{{therapist_mail}}/{{date}}/{{hour}}'>aqui</a>.</span>
+            <span>Em caso de necesidade de reagendamento/cancelamento do horário pedimos a gentileza de avisar com antecedência mínima de 12h, clicando <a href='{{api}}/api/calendars/{{calendar}}/agendas/cancel/{{therapist_mail}}/{{date}}/{{hour}}'>aqui</a>.</span>
             <hr />
             <h3>Recomendações pré-consulta:</h3>
             <p>
@@ -127,6 +110,7 @@
         <div class="row">
                 <div class="col-md-4">
                     <h3>Contato</h3>
+                    <span class="col-header">e-mail:&nbsp;</span><a target="_blank" href="mailto:aset.contato@gmail.com?subject=Retorno%3A%20E-mail%20de%20agendamento" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:13px;text-decoration:none;color:#1105F2;">aset.contato@gmail.com</a><br/>
                     <span>Av. João Ramalho, 430 - sala 34</span><br/>
                     <span>Vila Assunção - Santo André / SP</span>
                 </div>
@@ -134,7 +118,6 @@
                     <h3>Telefones</h3>
                     <span>(11) 3705-2738</span><br/>
                     <span>(11) 98794-8205</span><br/>
-                    <a target="_blank" href="mailto:aset.contato@gmail.com?subject=Retorno%3A%20E-mail%20de%20agendamento" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:13px;text-decoration:none;color:#1105F2;">aset.contato@gmail.com</a>
                 </div>
             </div>
     </div>
