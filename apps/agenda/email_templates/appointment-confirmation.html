@@ -1,39 +1,45 @@
 <style>
     .row {
-        display: flex;
-        flex-direction: row;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .col {
+        display: inline-block;
+    }
+
+    .box {
+        margin: 10px 10px 10px 10px;
     }
     
-    table {
-        text-align: left;
-    }
-
-    .col-header {
-        font-weight: bold;
-    }
-
     /* Extra small devices (phones, 600px and down) */
     @media only screen and (max-width: 768px) {
         .col-sm-4 {
-            flex: 4
+            width: 33%;
+        }
+        .col-sm-6 {
+            width: 50%;
         }
         .col-sm-8 {
-            flex: 8
+            width: 66%;
         }
     }
     /* Medium devices (landscape tablets, 768px and up) */
     @media only screen and (min-width: 769px) {
         .col-md-3 {
-            flex: 3
+            width: 25%;
         }
         .col-md-4 {
-            flex: 4
+            width: 33%;
+        }
+        .col-md-6 {
+            width: 50%;
         }
         .col-md-9 {
-            flex: 9
+            width: 75%;
         }
         .col-md-12 {
-            flex: 12
+            width: 100%;
         }
     }
 </style>
@@ -43,11 +49,11 @@
 <div>
     <div class="container text-center" style="padding-top: 2em">
         <div class="row">
-            <div class="col-md-3 col-sm-4">
+            <div class="col col-md-3 col-sm-4">
                 <img style="width: 100%; max-width: 100px" src="https://ibbqfj.stripocdn.email/content/guids/CABINET_1489503b4d3a5666baeafe308a8306b2/images/44671587478699534.png" alt="">
             </div>
-            <div class="col-md-9 col-sm-8">
-                <h1 class="display-4" style="color: #800080;">Seja bem vindo à Aset Terapias</h1>
+            <div class="col col-md-9 col-sm-8">
+                <h1 class="display-4" style="color: #800080;">Seja bem vinda(o) à Aset Terapias</h1>
             </div>
         </div>
     </div>
@@ -56,10 +62,10 @@
         <h1>Confirmação de Agendamento</h1>
         <br/>
         <span>Olá {{nome}}, você possui um horário agendado com o terapeuta:</span><br /><br />
-        <span class="col-header">Terapia&nbsp;</span><span>{{nome_terapia}}</span><br/>
-        <span class="col-header">Profissional&nbsp;</span><span>{{nome_terapeuta}}</span><br/>
-        <span class="col-header">Data&nbsp;</span><span>{{data}}</span><br/>
-        <span class="col-header">Horário&nbsp;</span><span>{{hora}}</span><br/>
+        <span><strong>Terapia:&nbsp;</strong></span><span>{{nome_terapia}}</span><br/>
+        <span><strong>Profissional:&nbsp;</strong></span><span>{{nome_terapeuta}}</span><br/>
+        <span><strong>Data:&nbsp;</strong></span><span>{{data}}</span><br/>
+        <span><strong>Horário:&nbsp;</strong></span><span>{{hora}}</span><br/>
     </div>
     <div class="container">
         <p>
@@ -87,7 +93,7 @@
     <div class="container">
         <hr />
         <div class="row">
-            <div class="col-md-12">
+            <div class="col col-md-12">
                 <h3>Redes sociais</h3>
                 <span>Siga-nos em nossas redes sociais</span>
                 <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;">
@@ -109,13 +115,13 @@
         <br/>
         <hr/>
         <div class="row">
-                <div class="col-md-4">
+                <div class="box col col-md-6">
                     <h3>Contato</h3>
                     <span class="col-header">e-mail:&nbsp;</span><a target="_blank" href="mailto:aset.contato@gmail.com?subject=Retorno%3A%20E-mail%20de%20agendamento" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:13px;text-decoration:none;color:#1105F2;">aset.contato@gmail.com</a><br/>
                     <span>Av. João Ramalho, 430 - sala 34</span><br/>
                     <span>Vila Assunção - Santo André / SP</span>
                 </div>
-                <div class="col-md-4">
+                <div class="box col col-md-6">
                     <h3>Telefones</h3>
                     <span>(11) 3705-2738</span><br/>
                     <span>(11) 98794-8205</span><br/>
