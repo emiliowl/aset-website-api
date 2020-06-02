@@ -293,7 +293,7 @@ def upload(name, therapist_email, month, year):
     for agenda in agenda_list:
         agenda.delete()
 
-    agendas = process_agenda(file, calendar, therapist)
+    agendas = process_agenda(file, calendar, therapist, month, year)
     for agenda in agendas:
         agenda.save()
     return 'processamento efetuado com sucesso!', 200

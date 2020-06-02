@@ -3,7 +3,7 @@ from os.path import dirname
 import csv
 from apps.agenda.models import Agenda, Calendar, Therapist
 
-def process_agenda(file, calendar, therapist):
+def process_agenda(file, calendar, therapist, month, year):
     print('processing agenda...')
     file.save(os.path.join(dirname(__file__), file.filename))
     file_path = os.path.join(dirname(__file__), file.filename)
@@ -20,7 +20,7 @@ def process_agenda(file, calendar, therapist):
                 if row[k] is not None and row[k] != '':
                     print(f'Day: {k} -> Hour: {row[k]}')
                     agenda = Agenda()
-                    agenda.date = f'{k}/05/2020'
+                    agenda.date = f'{k}/{month}/{year}'
                     agenda.time = f'{row[k]}'
                     agenda.calendar = calendar
                     agenda.therapist = therapist
