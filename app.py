@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 # a partir do arquivo atual adicione ao path o arquivo .env
 _ENV_FILE = join(dirname(__file__), '.env')
 
-print('barbaridade...')
-
 # existindo o arquivo faça a leitura do arquivo através da função load_dotenv
 if isfile(_ENV_FILE):
     print(f'loading dotenv from file {_ENV_FILE}')

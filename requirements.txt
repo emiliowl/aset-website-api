@@ -17,7 +17,9 @@ pandas==1.0.3
 pymongo==3.6.1
 python-dateutil==2.8.1
 python-dotenv==0.12.0
+python-http-client==3.2.7
 pytz==2019.3
+sendgrid==6.3.1
 six==1.14.0
 TatSu==4.4.0
 Werkzeug==1.0.1

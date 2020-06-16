@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, Response, abort, request
 from marshmallow import ValidationError
 
-from infra.mail_sender import send_mail, send_contact_mail
+from infra.mail_sender import send_mail_sendgrid, send_contact_mail
 from apps.agenda.models import Agenda, Appointment
 from apps.core.models import Customer, Therapist
 from apps.core.validations import CustomerSchema, MessageSchema
@@ -30,7 +30,7 @@ def alive():
 
     agenda.appointment = appointment
 
-    send_mail('agendamento atendimento aset', agenda)
+    send_mail_sendgrid('agendamento atendimento aset', agenda)
     return 'e-mail enviado com suscesso'
 
 @bp.route('/contact', methods=["POST"])

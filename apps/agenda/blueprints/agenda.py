@@ -12,7 +12,7 @@ from apps.agenda.models import Agenda, Appointment, Calendar
 from apps.core.models import Therapist, Customer
 from apps.core.validations import CustomerSchema
 from apps.serializer import default
-from infra.mail_sender import send_mail
+from infra.mail_sender import send_mail_sendgrid
 
 from apps.agenda_upload.calendar_reader import process_agenda
 
@@ -258,7 +258,7 @@ def book(name, therapist_email, agenda_date, agenda_time):
         agenda.save()
 
         # send e-mail related to appointment
-        send_mail('agendamento atendimento aset', agenda)
+        send_mail_sendgrid('agendamento atendimento aset', agenda)
 
         agenda_json = json.dumps(agenda.to_dict(), default=default)
         return Response(agenda_json, mimetype='application/json', status=200)
