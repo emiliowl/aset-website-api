@@ -270,7 +270,9 @@ def book(name, therapist_email, agenda_date, agenda_time):
         print(ex)
         abort(500)
 
-@bp.route('/upload/<string:therapist_email>/<string:month>/<string:year>', methods=["POST"])
+
+@bp.route('/upload/<string:therapist_email>/<string:month>/<string:year>',
+          methods=["POST"])
 def upload(name, therapist_email, month, year):
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -280,7 +282,7 @@ def upload(name, therapist_email, month, year):
         return 'Please upload a file... this is empty', 400
 
     print('processing upload...')
-    
+
     calendar = Calendar.objects.get(name=name)
     therapist = Therapist.objects.get(email=therapist_email)
     agenda_list = Agenda.objects(
@@ -294,6 +296,24 @@ def upload(name, therapist_email, month, year):
         agenda.delete()
 
     agendas = process_agenda(file, calendar, therapist, month, year)
-    for agenda in agendas:
+    agenda_list_booked = Agenda.objects(
+            calendar=calendar,
+            therapist=therapist,
+            date__contains=f'{month}/{year}',
+            appointment__exists=True)
+    print('all booked agendas')
+    print(agenda_list_booked)
+    agendas_to_persist = list(filter(lambda a: len(
+        list(filter(lambda b: b.calendar.name == a.calendar.name
+                           and b.therapist.name == a.therapist.name
+                           and b.date == a.date
+                           and b.time == a.time,
+                           agenda_list_booked))
+        ) == 0, agendas))
+
+    print(f'persisting agendas : {list(agendas_to_persist)}')
+    for agenda in agendas_to_persist:
+        print(f'saving agenda {agenda.date} {agenda.time}')
         agenda.save()
+
     return 'processamento efetuado com sucesso!', 200

@@ -1,7 +1,8 @@
 import os
 from os.path import dirname
 import csv
-from apps.agenda.models import Agenda, Calendar, Therapist
+from apps.agenda.models import Agenda
+
 
 def process_agenda(file, calendar, therapist, month, year):
     print('processing agenda...')
@@ -27,6 +28,7 @@ def process_agenda(file, calendar, therapist, month, year):
                     created_agendas.append(agenda)
 
     return created_agendas
+
 
 def process_agenda_mock(calendar, therapist):
     created_agendas = []
