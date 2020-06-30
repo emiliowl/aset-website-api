@@ -1,8 +1,7 @@
 # -*- coding:utf-8 -*-
-import os
-from os.path import dirname
 import json
-from datetime import datetime, date
+import pytz
+from datetime import datetime
 
 from flask import Blueprint, Response, abort, request
 from mongoengine import Q
@@ -45,14 +44,36 @@ def get_next_dates(name):
         calendar = Calendar.objects.get(name=name)
         agendas = Agenda.objects(calendar=calendar, appointment=None)
         print(agendas)
-        agendas = [ag.date for ag in agendas if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
-        
+        tz = pytz.timezone('America/Sao_Paulo')
+        now = datetime.now(tz)
+        today = now.date()
+        current_hour = f'{str(now.hour).zfill(2)}:00'
+        agendas = [
+            ag.date for ag
+            in agendas
+            if Agenda.objects(
+                calendar=calendar,
+                date=ag.date,
+                time=ag.time,
+                appointment__exists=True)
+            .count() < int(calendar.room_size)
+            and (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() > today
+            )
+            or (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() == today
+                and ag.time > current_hour
+            )
+        ]
         all_dates_list = [
-            datetime.strptime(ag, '%d/%m/%Y').date() for ag in list(agendas)
+            datetime.strptime(ag, '%d/%m/%Y').date()
+            for ag in list(agendas)
         ]
 
         all_dates_list.sort()
-        dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
+        dates_list = [
+            dt for dt in list(dict.fromkeys(all_dates_list))
+        ]
 
         next_dates_sorted = dates_list[:30]
 
@@ -70,16 +91,39 @@ def get_next_dates_for_specialty(name, specialty):
         therapists = Therapist.objects(Q(specialties__contains=specialty))
         print(therapists)
         agendas = Agenda.objects(
-                Q(calendar=calendar, appointment=None, therapist__in=therapists),
+                Q(
+                    calendar=calendar,
+                    appointment=None,
+                    therapist__in=therapists
+                ),
             )
         print(agendas)
-        agendas = [ag.date for ag in list(agendas) if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
+        tz = pytz.timezone('America/Sao_Paulo')
+        now = datetime.now(tz)
+        today = now.date()
+        current_hour = f'{str(now.hour).zfill(2)}:00'
+        agendas = [
+            ag.date for ag in list(agendas)
+            if Agenda.objects(
+                calendar=calendar,
+                date=ag.date,
+                time=ag.time,
+                appointment__exists=True
+            ).count() < int(calendar.room_size)
+            and (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() > today
+            )
+            or (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() == today
+                and ag.time > current_hour
+            )
+        ]
 
         all_dates_list = [
             datetime.strptime(dt, '%d/%m/%Y').date() for dt in list(agendas)
         ]
         all_dates_list.sort()
-        dates_list = [dt for dt in list(dict.fromkeys(all_dates_list)) if dt >= date.today()]
+        dates_list = [dt for dt in list(dict.fromkeys(all_dates_list))]
 
         next_dates_sorted = dates_list[:30]
 
@@ -94,9 +138,31 @@ def get_next_dates_for_specialty(name, specialty):
 def get_for_date(name, agenda_date):
     try:
         calendar = Calendar.objects.get(name=name)
-        agendas = Agenda.objects(calendar=calendar, date=agenda_date.replace('-', '/'), appointment=None)
+        agendas = Agenda.objects(
+            calendar=calendar,
+            date=agenda_date.replace('-', '/'),
+            appointment=None)
         print(agendas)
-        agendas = [ag for ag in agendas if Agenda.objects(calendar=calendar, date=ag.date, time=ag.time, appointment__exists=True).count() < int(calendar.room_size)]
+        tz = pytz.timezone('America/Sao_Paulo')
+        now = datetime.now(tz)
+        today = now.date()
+        current_hour = f'{str(now.hour).zfill(2)}:00'
+        agendas = [
+            ag for ag in agendas
+            if Agenda.objects(
+                calendar=calendar,
+                date=ag.date,
+                time=ag.time,
+                appointment__exists=True
+            ).count() < int(calendar.room_size)
+            and (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() > today
+            )
+            or (
+                datetime.strptime(ag.date, '%d/%m/%Y').date() == today
+                and ag.time > current_hour
+            )
+        ]
 
         agendas_json = json.dumps(
             [t.to_dict() for t in agendas],
@@ -173,12 +239,15 @@ def create(name):
         print(ex)
         abort(500)
 
-@bp.route('/cancel/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["GET"])
+
+@bp.route(
+    '/cancel/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', 
+    methods=["GET"])
 def remove_from_email(name, therapist_email, agenda_date, agenda_time):
     try:
         calendar = Calendar.objects.get(name=name)
         therapist = Therapist.objects.get(email=therapist_email)
-        agenda :Agenda = Agenda.objects.get(
+        agenda: Agenda = Agenda.objects.get(
             calendar=calendar,
             therapist=therapist,
             date=agenda_date.replace('-', '/'),
@@ -190,20 +259,17 @@ def remove_from_email(name, therapist_email, agenda_date, agenda_time):
         hours = date_diff.total_seconds() / 60 / 60
         print('Diferença de horas:')
         print(hours)
-        mensagem = 'Cancelamento realizado com sucesso.'
-        if hours < 12:
-            mensagem = 'Cancelamento realizado com sucesso...'
-
         agenda.appointment = None
         agenda.save()
-
-        agenda_json = json.dumps(agenda.to_dict(), default=default)
         return 'Cancelamento realizado com sucesso.', 200
     except Exception as ex:
         print(ex)
         abort(500)
 
-@bp.route('/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', methods=["DELETE"])
+
+@bp.route(
+    '/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>',
+    methods=["DELETE"])
 def remove(name, therapist_email, agenda_date, agenda_time):
     try:
         calendar = Calendar.objects.get(name=name)
