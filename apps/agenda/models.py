@@ -16,10 +16,12 @@ from apps.core.models import Customer, Therapist
 class Appointment(db.EmbeddedDocument, ModelCore):
     customer: Customer = ReferenceField(Customer)
     specialty = StringField(required=True)
+    text = StringField(required=False)
 
     def to_dict(self):
         serial = {}
         serial['specialty'] = self.specialty
+        serial['text'] = self.text
         if(self.customer is not None):
             serial['customer'] = self.customer.to_dict()
 

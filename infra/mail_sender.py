@@ -5,9 +5,11 @@ from datetime import timedelta, datetime
 
 import base64
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition, ContentId
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, Disposition, ContentId
+
 
 from apps.agenda.models import Agenda, Customer
+
 
 def send_contact_mail(subject, text, customer: Customer):
     curdir = os.getcwd()
@@ -25,6 +27,39 @@ def send_contact_mail(subject, text, customer: Customer):
             subject=subject,
             contents=body
         )
+
+
+def send_cancel_mail_sendgrid(agenda: Agenda):
+    curdir = os.getcwd()
+
+    with open(f'{curdir}{os.sep}apps{os.sep}agenda{os.sep}email_templates{os.sep}appointment-cancellation.html', encoding='utf-8') as templ:
+        body = ''.join(templ.readlines())
+        body = body.replace('{{nome}}', agenda.appointment.customer.name)
+        body = body.replace('{{nome_terapia}}', agenda.appointment.specialty)
+        body = body.replace('{{nome_terapeuta}}', agenda.therapist.name)
+        body = body.replace('{{data}}', agenda.date)
+        body = body.replace('{{hora}}', agenda.time)
+
+        body = body.replace('{{calendar}}', agenda.calendar.name)
+        body = body.replace('{{therapist_mail}}', agenda.therapist.email)
+        body = body.replace('{{date}}', agenda.date.replace('/', '-'))
+        body = body.replace('{{hour}}', agenda.time)
+        body = body.replace('{{text}}', agenda.appointment.text)
+
+        message = Mail(
+            from_email=os.getenv("EMAIL_SENDER"),
+            to_emails=agenda.appointment.customer.email,
+            subject='Aset Terapias : Cancelamento de consulta',
+            html_content=body)
+        try:
+            message.add_bcc(agenda.therapist.email)
+            message.add_bcc(os.getenv("EMAIL_SENDER"))
+
+            sg = SendGridAPIClient(api_key=os.getenv('EMAIL_TOKEN'))
+            sg.send(message=message)
+        except Exception as e:
+            print('Erro no envio de e-mail')
+            print(e)
 
 
 def send_mail_sendgrid(description, agenda: Agenda):
@@ -59,6 +94,7 @@ def send_mail_sendgrid(description, agenda: Agenda):
         body = body.replace('{{therapist_mail}}', agenda.therapist.email)
         body = body.replace('{{date}}', agenda.date.replace('/', '-'))
         body = body.replace('{{hour}}', agenda.time)
+        body = body.replace('{{text}}', agenda.appointment.text)
 
         message = Mail(
             from_email=os.getenv("EMAIL_SENDER"),

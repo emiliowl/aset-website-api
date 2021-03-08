@@ -11,7 +11,7 @@ from apps.agenda.models import Agenda, Appointment, Calendar
 from apps.core.models import Therapist, Customer
 from apps.core.validations import CustomerSchema
 from apps.serializer import default
-from infra.mail_sender import send_mail_sendgrid
+from infra.mail_sender import send_mail_sendgrid, send_cancel_mail_sendgrid
 
 from apps.agenda_upload.calendar_reader import process_agenda
 
@@ -241,7 +241,7 @@ def create(name):
 
 
 @bp.route(
-    '/cancel/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>', 
+    '/cancel/<string:therapist_email>/<string:agenda_date>/<string:agenda_time>',
     methods=["GET"])
 def remove_from_email(name, therapist_email, agenda_date, agenda_time):
     try:
@@ -259,8 +259,13 @@ def remove_from_email(name, therapist_email, agenda_date, agenda_time):
         hours = date_diff.total_seconds() / 60 / 60
         print('Diferença de horas:')
         print(hours)
+
+        # send e-mail related to appointment
+        send_cancel_mail_sendgrid(agenda)
+
         agenda.appointment = None
         agenda.save()
+
         return 'Cancelamento realizado com sucesso.', 200
     except Exception as ex:
         print(ex)
@@ -319,6 +324,7 @@ def book(name, therapist_email, agenda_date, agenda_time):
         appointment = Appointment()
         appointment.customer = customer
         appointment.specialty = appointment_json['specialty']
+        appointment.text = appointment_json['text']
 
         agenda.appointment = appointment
         agenda.save()

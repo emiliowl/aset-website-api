@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
-from datetime import datetime, timedelta
-from flask import Blueprint, Response, abort, request
+from flask import Blueprint, request
 from marshmallow import ValidationError
 
 from infra.mail_sender import send_mail_sendgrid, send_contact_mail
@@ -33,6 +32,7 @@ def alive():
     send_mail_sendgrid('agendamento atendimento aset', agenda)
     return 'e-mail enviado com suscesso'
 
+
 @bp.route('/contact', methods=["POST"])
 def contact():
     contact_json = request.json
@@ -49,7 +49,7 @@ def contact():
         except Exception as ex:
             print(f'customer not found {ex}, creating...')
             customer.save()
-    
+
     except ValidationError as err:
         print('erro de validação!', err.messages)
         return err.messages, 400
