@@ -15,3 +15,5 @@ env/
 .idea
 .cache/
 go.ics
+data/
+data/**
